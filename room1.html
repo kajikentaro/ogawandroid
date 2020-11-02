@@ -39,6 +39,7 @@
             <input type="submit" value="送信">
         </form>
     </div>
+    <div id="show"></div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js">
         $('btnsend').on('click', function () {
@@ -62,14 +63,14 @@
                 url: 'increment.php',
                 data: $(this).serialize(),
                 dataType: 'json',
-                success: function (data) {
-                    $('#hidden').val(data);// first set the value     
-                },
-                complete: function (data) {
+            })
+                .done(function (data1, testStatus, jqxhr) {
+                    $("#show").text(jqxhr.status);
+                })
+                .always(function () {
                     // Schedule the next
                     setTimeout(doAjax, interval);
-                }
-            });
+                });
         }
         setTimeout(doAjax, interval);
     </script>
