@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <title>movie_room</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="room_name">
+    </div>
+    <div style="text-align:right">
+        <div id="screen">
+            <iframe id="content" src="https://www.youtube.com/embed/SyWwoMpP_P4?&autoplay=1&mute=1" frameborder="0"
+                allowfullscreen></iframe>
+        </div>
+        <table>
+            <tr>
+                <div id="commentv">
+                    <iframe src="comment.html" id="com"></iframe>
+
+                </div>
+            </tr>
+            <tr>
+                <div id="comment_form">
+                    <form name="fm">
+                        <input type="textarea" name="name" id="com_text">
+                        <input type="button" id="btnsend" name="submit" value="送信" onclick="asyncSend()">
+                    </form>
+                    <div id="result"></div>
+                </div>
+            </tr>
+        </table>
+    </div>
+    <div id="url">
+        <form action="http://18.181.166.121/saitofolder/rec.php" method="post">
+            <input type="textarea" name="confirm" id="URL">
+            <input type="submit" value="送信">
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js">
+        $('btnsend').on('click', function () {
+            $('#result').text('通信中...');
+            $.ajax({
+                url: 'rec.php',
+                type: 'POST',
+                dataType: 'json',
+                data: $('form').serializeArray(),
+                timeout: 5000,
+            })
+                .done(function (data) {
+                })
+                .fail(function () {
+                });
+        })
+        var interval = 1000;
+        function doAjax() {
+            $.ajax({
+                type: 'POST',
+                url: 'increment.php',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    $('#hidden').val(data);// first set the value     
+                },
+                complete: function (data) {
+                    // Schedule the next
+                    setTimeout(doAjax, interval);
+                }
+            });
+        }
+        setTimeout(doAjax, interval);
+    </script>
+    <script>
+        console.log("hello");
+    </script>
+</body>
+
+</html>
