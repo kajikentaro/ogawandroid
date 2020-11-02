@@ -17,9 +17,10 @@
         </div>
         <table>
             <tr>
-                <div id="commentv">
-                    <iframe src="comment.html" id="com"></iframe>
-
+                <div id="com">
+			<div id=comment_content style="word-wrap:break-word;">
+				<p>コメ1</p>
+			</div>
                 </div>
             </tr>
             <tr>
@@ -45,22 +46,21 @@ function add_comment(text){
 	var newElement = document.createElement("p"); // p要素作成
 	var newContent = document.createTextNode(text); // テキストノードを作成
 	newElement.appendChild(newContent); // p要素にテキストノードを追加
-	newElement.setAttribute("id","id_comment"); // p要素にidを設定
+	newElement.setAttribute("id","child-comment"); // p要素にidを設定
 	var parentDiv = document.getElementById("comment_content");
-	//parentDiv.insertBefore(newElement,parentDiv.firstChild);
-	parentDiv.appendChild(newElement);
+parentDiv.insertBefore(newElement, parentDiv.firstChild);
 }
 var conn = new WebSocket('ws://localhost:8080');
 conn.onopen = function(e) {
 	console.log("Connection established!");
-}
+};
 conn.onmessage = function(e) {
-    //console.log(e.data);
 	add_comment(e.data);
-}
+};
 function send_comment(){
 	text =document.getElementById("com_text").value;
 	conn.send(text);
+	add_comment(text);
 }
 </script>
 

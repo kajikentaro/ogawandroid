@@ -17,11 +17,11 @@
   height: 100%;
 }
 
-#commentv {
-  padding-right: 5vw;
-}
 #com {
+  float:left;
+  padding-right: 5vw;
   width: 30vw;
+  background-color:#eee;
   height:350px;
 }
 #comment {
