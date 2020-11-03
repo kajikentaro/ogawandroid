@@ -1,23 +1,26 @@
 <?php
-echo("aaa");
+ini_set('display_errors',1);
 try {
 	$dbh = new PDO(
-	'mysql:host=localhost;dbname=player;charset=utf8;',
-	'youtubesync',
+	'mysql:host=localhost;dbname=ogawandroid;charset=utf8;',
+	#'mysql:host=54.238.75.103;dbname=ogawandroid;charset=utf8;',
+	'ogawandroid',
 	'password',
 	array(
 	    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 	    PDO::ATTR_EMULATE_PREPARES => false,
 	)
 	);
-	echo("SQLサービス接続成功");
-	$prepare = $dbh->prepare('show tables;');
+	$prepare = $dbh->prepare('select * from player;');
 	$prepare->execute();
-	$result = $prepare->fetch(PDO::FETCH_BOTH);
-	print_r($result);
-	echo("接続終了");
+	$result = $prepare->fetchAll(PDO::FETCH_BOTH);
+	echo json_encode($result);
 } catch (PDOException $e) {
+	$error = $e->getMessage();
+	die("pdo接続に失敗<br>$error");
+} catch (Exception $e){
 	$error = $e->getMessage();
 	die("接続に失敗<br>$error");
 }
+
 ?>
