@@ -6,22 +6,30 @@
     <title>movie_room</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <header>
+        <h1>YouTube Sync</h1>
+    </header>
     <div id="room_name">
     </div>
-    <div style="text-align:right">
+    <div id="left-contents-wrapper">
+    <div id="left-contents">
         <div id="screen">
             <iframe id="content" src="https://www.youtube.com/embed/SyWwoMpP_P4?&autoplay=1&mute=1" frameborder="0"
                 allowfullscreen></iframe>
         </div>
+        <div id="url">
+            <form action="http://18.181.166.121/saitofolder/rec.php" method="post">
+                <input type="textarea" name="confirm" id="URL">
+                <input type="submit" value="送信">
+            </form>
+        </div></div>
+    </div><div id="right-contents-wrapper"><div id="right-contents">
         <table>
             <tr>
-                <div id="com">
 			<div id=comment_content style="word-wrap:break-word;">
 				<p>コメ1</p>
 			</div>
-                </div>
             </tr>
             <tr>
                 <div id="comment_form">
@@ -33,24 +41,17 @@
                 </div>
             </tr>
         </table>
-    </div>
-    <div id="url">
-        <form action="http://18.181.166.121/saitofolder/rec.php" method="post">
-            <input type="textarea" name="confirm" id="URL">
-            <input type="submit" value="送信">
-        </form>
-    </div>
-    <div id="show"></div>
+    </div></div>
 <script>
 function add_comment(text){
-	var newElement = document.createElement("p"); // p要素作成
-	var newContent = document.createTextNode(text); // テキストノードを作成
-	newElement.appendChild(newContent); // p要素にテキストノードを追加
+	var newelement = document.createelement("p"); // p要素作成
+	var newcontent = document.createtextnode(text); // テキストノードを作成
+	newelement.appendchild(newcontent); // p要素にテキストノードを追加
 	newElement.setAttribute("id","child-comment"); // p要素にidを設定
 	var parentDiv = document.getElementById("comment_content");
 parentDiv.insertBefore(newElement, parentDiv.firstChild);
 }
-var conn = new WebSocket('ws://ec2-18-181-166-121.ap-northeast-1.compute.amazonaws.com:8080');
+var conn = new WebSocket('ws://54.238.75.103:8080');
 conn.onopen = function(e) {
 	console.log("Connection established!");
 };
@@ -59,48 +60,10 @@ conn.onmessage = function(e) {
 };
 function send_comment(){
 	text =document.getElementById("com_text").value;
+	document.getElementById("com_text").value = "";
 	conn.send(text);
 	add_comment(text);
 }
 </script>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js">
-
-        $('btnsend').on('click', function () {
-            $('#result').text('通信中...');
-            $.ajax({
-                url: 'rec.php',
-                type: 'POST',
-                dataType: 'json',
-                data: $('form').serializeArray(),
-                timeout: 5000,
-            })
-                .done(function (data) {
-                })
-                .fail(function () {
-                });
-        })
-        var interval = 1000;
-        function doAjax() {
-            $.ajax({
-                type: 'POST',
-                url: 'increment.php',
-                data: $(this).serialize(),
-                dataType: 'json',
-            })
-                .done(function (data1, testStatus, jqxhr) {
-                    $("#show").text(jqxhr.status);
-                })
-                .always(function () {
-                    // Schedule the next
-                    setTimeout(doAjax, interval);
-                });
-        }
-        setTimeout(doAjax, interval);
-    </script>
-    <script>
-        console.log("hello");
-    </script>
 </body>
-
 </html>
