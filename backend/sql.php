@@ -1,4 +1,7 @@
 <?php
+header('Access-Control-Allow-Origin: null');
+header('Access-Control-Allow-Credentials: true ');
+
 ini_set('display_errors',1);
 try {
 	$dbh = new PDO(

@@ -27,7 +27,7 @@
     </div><div id="right-contents-wrapper"><div id="right-contents">
         <table>
             <tr>
-			<div id=comment_content style="word-wrap:break-word;">
+			<div id="comment_content" style="word-wrap:break-word;">
 				<p>コメ1</p>
 			</div>
             </tr>
@@ -44,12 +44,12 @@
     </div></div>
 <script>
 function add_comment(text){
-	var newelement = document.createelement("p"); // p要素作成
-	var newcontent = document.createtextnode(text); // テキストノードを作成
-	newelement.appendchild(newcontent); // p要素にテキストノードを追加
-	newElement.setAttribute("id","child-comment"); // p要素にidを設定
+	var newElement = document.createElement("p"); // p要素作成
+	var newContent = document.createTextNode(text); // テキストノードを作成
+	newElement.appendChild(newContent); // p要素にテキストノードを追加
+	newElement.setAttribute("id","child-p1"); // p要素にidを設定
 	var parentDiv = document.getElementById("comment_content");
-parentDiv.insertBefore(newElement, parentDiv.firstChild);
+	parentDiv.insertBefore(newElement, parentDiv.firstChild);
 }
 var conn = new WebSocket('ws://54.238.75.103:8080');
 conn.onopen = function(e) {
