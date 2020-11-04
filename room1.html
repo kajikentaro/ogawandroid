@@ -13,75 +13,216 @@
         <h1 id="tagname"></h1>
     </div>
     <div class="main">
-        <div id="left-contents-wrapper">
-            <div id="left-contents">
-                <div class="parent_screen">
-                    <div class="screen">
-                        <iframe id="content" src="https://www.youtube.com/embed/SyWwoMpP_P4?&autoplay=0&mute=1"
-                            frameborder="0" allowfullscreen></iframe>
+        <div class="contents">
+            <div id="left-contents-wrapper">
+                <div id="left-contents">
+                    <div class="parent_screen">
+                        <div id="screen" class="screen"></div>
+                    </div>
+                    <div class="url" id="url">
+                        <h3>URLを送信してコンテンツを共有しよう</h3>
+                        <form onsubmit="return false;">
+                            <input type="text" name="confirm" style="width:auto;height:50px;" id="URL">
+                            <input type="button" style="width:50px;height:30px;" value="送信" onclick="send_url()">
+                        </form>
+                        <div id="result_URLsend"></div>
                     </div>
                 </div>
-                <div class="url" id="url">
-                    <h3>URLを送信してコンテンツを共有しよう</h3>
-                    <form onsubmit="return false;" action="http://18.181.166.121/saitofolder/rec.php" method="post">
-                        <input type="textarea" name="confirm" style="width:auto;height:50px;" id="URL">
-                        <input type="submit" style="width:50px;height:30px;" value="送信">
-                    </form>
+            </div>
+            <div id="right-contents-wrapper">
+                <div id="right-contents">
+                    <div class="comment_content" id="comment_content" style="word-wrap:break-word;">
+                        <p>コメ1</p>
+                    </div>
+                    <div class="comment_form" id="comment_form">
+                        <form onsubmit="return false;" name="fm">
+                            <input type="text" name="name" id="com_text">
+                            <input type="button" id="btnsend" name="submit" value="送信" onclick="send_comment()">
+                        </form>
+                        <div id="result"></div>
+                        <input type="button" id="unMute" value="unmute" onclick="unmute()">
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="right-contents-wrapper">
-            <div id="right-contents">
-                <div class="comment_content" id="comment_content" style="word-wrap:break-word;">
-                    <p>コメ1</p>
-                </div>
-                <div class="comment_form" id="comment_form">
-                    <form onsubmit="return false;" name="fm">
-                        <input type="textarea" name="name" id="com_text">
-                        <input type="button" id="btnsend" name="submit" value="送信" onclick="send_comment()">
-                    </form>
-                    <div id="result"></div>
-                </div>
-            </div>
+        <div id="link">
+            <a class="youtube_link" style="font-size:20px;" href="https://www.youtube.com/">youtubeからURLを取得しよう</a>
         </div>
     </div>
     <script>
+        function URLToId(url) {
+            a = url.split("=");
+            return a[1];
+        }
+        function unmute() {
+            player.unMute();
+        }
         const query = location.search;
         const value = query.split('=');
-        const tag = decodeURIComponent(value[1]);//index.htmlからget通信で受け取った変数
+        var tag = decodeURIComponent(value[1]);//index.htmlからget通信で受け取った変数
         console.log(tag);
-        document.getElementById("tagname").innerHTML = tag;
-        const url = "";//送信先指定場所
+        /*tagが定義されていないとメインページに戻る仕様。開発中は無視しておｋ
+        if (tag === "undefined") window.location.href="index.html";
+        else  document.getElementById("tagname").innerHTML = tag ;*/
+        //API読み込み
+        var tt = document.createElement('script');
+        tt.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tt, firstScriptTag);
 
-
-        //タグ（テキスト形式）をpostで送信するからjson形式でurlを返してほしい
-        var xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
-        xhr.open('POST', url);
-        var test = "tag=" + tag;
-        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        xhr.responseType = 'json';
-        xhr.send(test);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                data = this.response;
-                console.log("tag_name : " + data[0]["tag"]);
-                console.log("url : " + data[0]["url"]);
-                console.log(data);
+        /////////////////////////////////////////////////////////////////
+        var currentURL = sendPostXHR(/*phpURL*/0, "tag", tag);
+        /////////////////////////////////////////////////////////////////
+        var currentURL = "https://www.youtube.com/watch?v=Mw4j4yPsFtg";//test
+        var V_id = URLToId(currentURL);
+        var player;
+        var YoutubeLength;
+        var currentTime;
+        var nextURL;
+        function LoadYoutube(StartTime = 0) {
+            player = new YT.Player('screen', {
+                videoId: URLToId(currentURL),
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'iv_load_policy': 3,
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'start': StartTime
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                }
+            });
+        }
+        //APIが読み込まれたら実行される関数。StartTimeを取得して参加
+        function onYouTubeIframeAPIReady() {
+            ///////////////////////////////////////////////////////////////
+            StartTime = sendPostXHR(/*phpURL*/0, "load_message", true, tag);   //load_message >>> StartTime
+            /////////////////////////////////////////////////////////////////
+            LoadYoutube(StartTime);
+        }
+        function onPlayerReady(event) {
+            //ミュートにしてから再生しないといけないらしい
+            player.mute();
+            event.target.playVideo();//再生
+            YoutubeLength = player.getDuration();//動画の長さ
+            console.log(YoutubeLength);
+        }
+        /*player.getPlayerState()
+        -1 – 未開始
+        0 – 終了
+        1 – 再生中
+        2 – 一時停止
+        3 – バッファリング中
+        5 – 頭出し済み
+        */
+        function onPlayerStateChange(event) {
+            if (player.getPlayerState() == 2) {
+                event.target.playVideo();
+                //止めさせない
+            }
+            if (player.getPlayerState() == 0) {
+                currentURL = nextURL;   //currentURLを更新
+                LoadYoutube();     //新しい動画のURLでロード
+                //返り値は何でもいい。ここでflagをtrueにする。
+                /////////////////////////////////////////////////////////////////
+                var any = sendPostXHR(/*phpURL*/0, "start_message", true);　//start_message >> flag=true
+                /////////////////////////////////////////////////////////////////
             }
         }
-        //同様にタグ（テキスト形式）をpostで送信するからjson形式でコメント群を返してほしい
-        xhr.open('POST', url);
-        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        xhr.responseType = 'json';
-        xhr.send(test);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                data = this.responseText;
-                console.log(data);
+        setInterval(function () {
+            currentTime = parseInt(player.getCurrentTime());
+            console.log(player.getVideoLoadedFraction());
+            console.log("state" + player.getPlayerState());
+            console.log(currentTime + "/" + YoutubeLength);
+            console.log(player.getPlaybackRate());
+            //返り値は適当でいい。1秒ごとにPOSTで現在の動画時間を送る
+            var any = sendPostXHR(/*phpURL*/0, "currentTime", currentTime);
+            //nextURLが更新されていない、かつ、動画の残り時間10秒のとき
+            if (nextURL == currentURL && YoutubeLength - currrentTime < 10) {
+                var t = new Date();
+                var rand = 111 * t.getDate() + t.getHours();
+                //乱数を送る
+                /////////////////////////////////////////////////////////////////
+                nextURL = sendPostXHR(/*phpURL*/0, "end_random", rand, tag);  //random >>> selectedURL
+                /////////////////////////////////////////////////////////////////
+                //backend側での処理
+                //1. 最初に来たエンドメッセージのリクエストでランダムにURLを選定。flag=falseにする。DBのcurrentURLを書き換える
+                //2. その後にくるリクエストはflagではじいて、currentURLを返す。
+                //3. 次の動画が始まるときにスタートメッセージを送るので、そのときにflag=trueをする.
             }
+        }, 1000);
+
+
+        //post通信
+        //ここらへん実際に動くか自信ないので確認お願いします。。。。
+        //（送信先のディレクトリ、サーバーで受け取ったときの変数の名前、変数の中身、タグ名）
+        function sendPostXHR(url, name, data, tag) {
+            var xhr = new XMLHttpRequest();
+            var return_data;
+            xhr.withCredentials = true;
+            xhr.open('POST', url);
+            //tagと任意の変数を渡します。
+            var Data = "tag" + "=" + tag + "&" + name + "=" + toString(data);
+            xhr.setRequestHeader('content-type', 'application/json');
+            xhr.onload = () => {
+                console.log(xhr.status);
+                console.log("success!");
+            };
+            xhr.onerror = () => {
+                console.log(xhr.status);
+                console.log("error!");
+            };
+            xhr.send(Data);
+            xhr.onreadystatechange = function () {
+                switch (xhr.readyState) {
+                    case 0:
+                        // 未初期化状態.
+                        console.log('uninitialized!');
+                        break;
+                    case 1: // データ送信中.
+                        console.log('loading...');
+                        break;
+                    case 2: // 応答待ち.
+                        console.log('loaded.');
+                        break;
+                    case 3: // データ受信中.
+                        console.log('interactive... ' + xhr.responseText.length + ' bytes.');
+                        break;
+                    case 4: // データ受信完了.
+                        if (xhr.status == 200 || xhr.status == 304) {
+                            var data = xhr.responseText; // responseXML もあり
+                            console.log('COMPLETE! :' + data);
+                        } else {
+                            console.log('Failed. HttpStatus: ' + xhr.statusText);
+                        }
+                        break;
+                }
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var responseData = JSON.parse(xhr.responseText);
+                    console.log(responseData);
+                    ///////////////////////////////////
+                    return_data = 0;
+                    ///////////////////////////////////
+                    /*return_dataは実際に通信してみて状況に応じて適切な値を返すように設定してほしい*/
+                }
+            }
+            return return_data;
+        }
+        function send_url() {
+            var sendURL = document.getElementById("URL").value;
+            /////////////////////////////////////////////////////////////////
+            var message = sendPostXHR(/*phpURL*/0, "sendURL", sendURL, tag);   //tag>>> URL
+            /////////////////////////////////////////////////////////////////
+            message = "送信に成功しました.";//test
+            document.getElementById("result_URLsend").innerHTML = message;
         }
 
+
+        //コメントの処理
         function add_comment(text) {
             var newElement = document.createElement("p"); // p要素作成
             var newContent = document.createTextNode(text); // テキストノードを作成

@@ -25,6 +25,9 @@
 .main {
   width: auto;
 }
+.contents{
+  height:500px;
+}
 #right-contents {
   padding: 1px 10px 10px 10px;
   height: 100%;
@@ -74,6 +77,9 @@
 }
 .url {
   margin: 50px 0px;
+}
+.youtube_link{
+  text-align:center;
 }
 
 #com {
