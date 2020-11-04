@@ -1,0 +1,96 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  width: auto;
+  margin: 0 auto;
+}
+.header {
+  background-color: #2bc4b5;
+  min-width: 600px;
+}
+.header p {
+  float: left;
+  padding: 5px;
+  padding-bottom: 0px;
+  margin: 0px;
+  font-weight: bold;
+  font-style: italic;
+}
+.header h1 {
+  margin: 0px;
+  color: white;
+  font-size: 40px;
+  text-align: center;
+}
+.main {
+  width: auto;
+}
+#right-contents {
+  padding: 1px 10px 10px 10px;
+  height: 100%;
+  border-radius: 3px;
+}
+#left-contents {
+  padding: 10px;
+  margin: 10px 3px;
+  height: 500px;
+}
+#left-contents-wrapper {
+  width: 60%;
+  height: 700px;
+  text-align: center;
+  float: left;
+  margin: 0px;
+  display: inline-block;
+}
+#right-contents-wrapper {
+  margin-top: 20px;
+  height: 400px;
+  float: right;
+  display: inline-block;
+  width: 30%;
+}
+.parent_screen {
+  height: 300px;
+  background-color: #000000;
+}
+.screen {
+  position: relative;
+  margin: 0px auto;
+  width: 90%;
+  height: 95%;
+}
+#screen:before {
+  content: "";
+  display: inline-block;
+  padding-top: 56.25%; /* 高さと幅の比を16:9に固定。9/16*100=56.25 */
+}
+#content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.url {
+  margin: 50px 0px;
+}
+
+#com {
+  float: left;
+  padding-right: 5vw;
+  width: 30vw;
+  background-color: #eee;
+  height: 350px;
+}
+#comment {
+  float: right;
+}
+.comment_content {
+  height: 300px;
+  background-color: #eee;
+  border-style: solid;
+  border-color: #000000;
+  background-color: #efefef;
+  padding: 20px;
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>ContentsSyncer</title>
+    <link rel="stylesheet" href="style_main.css">
+</head>
+
+<body>
+    <div class="body">
+        <div class="header">
+            <p class="Service_name">ContentsSyncer</p>
+        </div>
+        <div class="main">
+            <div class="introduce">
+                <h3 class="b">ContentsSyncerへようこそ!!</h3>
+                <p class="explain">ContentsSyncerは全世界の人達と好きなコンテンツをリアルタイムで共有することができます。</p>
+                </p>
+            </div>
+            <div class="tagList">
+                <h3 class="taguitiran">タグ一覧</h3>
+                <table id="tag_list">
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        console.log("hello");
+        let taglist = ["PopularMusic", "Anime", "Game", "Movie", "Study"];
+        let table = document.getElementById('tag_list');
+        let newRow;
+        taglist.forEach(function (val, index) {
+            console.log(val);
+            if (index % 4 == 0) {
+                newRow = table.insertRow();
+            }
+            console.log(index);
+            let newCell = newRow.insertCell();
+            let newText = document.createTextNode(val);
+            let a_tag = document.createElement("a");
+            newCell.appendChild(a_tag);
+        })
+        let x = document.getElementsByTagName("a");
+        console.log(x.length);
+        for (let i = 0; i < x.length; i++) {
+            x[i].id = "tag_id" + String(i);
+            x[i].innerHTML = taglist[i];
+            //リンクを押したらroom1.htmlに遷移。それと一緒にtag変数をget通信で送る。
+            x[i].setAttribute('href', 'room1.html?tag=' + encodeURIComponent(taglist[i]));
+
+        }
+    </script>
+</body>
+
+</html>
