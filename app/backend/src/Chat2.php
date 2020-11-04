@@ -2,6 +2,7 @@
 namespace MyApp;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+ini_set('display_errors',1);
 
 class Chat2 implements MessageComponentInterface {
     protected $clients;
