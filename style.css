@@ -1,0 +1,72 @@
+body {
+  margin: 0px;
+}
+header h1 {
+  margin: 0px;
+  color: white;
+  font-size: 40px;
+}
+#right-contents {
+  padding: 1px 10px 10px 10px;
+  margin: 10px 3px;
+  background-color: #efefef;
+  border-radius: 3px;
+}
+#left-contents {
+  padding: 10px;
+  margin: 10px 3px;
+  background-color: #efefef;
+  border-radius: 3px;
+}
+#left-contents-wrapper {
+  width: 70%;
+  height: 500px;
+  text-align: center;
+  float: left;
+  margin: 0px;
+  display: inline-block;
+}
+#right-contents-wrapper {
+  margin: 0px;
+  height: 500px;
+  float: right;
+  display: inline-block;
+  width: 30%;
+}
+header {
+  text-align: center;
+  margin: 0px;
+  background-color: #c4302b;
+}
+#screen {
+  position: relative;
+  margin: 0px auto;
+  width: 90%;
+}
+#screen:before {
+  content: "";
+  display: inline-block;
+  padding-top: 56.25%; /* 高さと幅の比を16:9に固定。9/16*100=56.25 */
+}
+#content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#com {
+  float: left;
+  padding-right: 5vw;
+  width: 30vw;
+  background-color: #eee;
+  height: 350px;
+}
+#comment {
+  float: right;
+}
+#comment_content {
+  height: 300px;
+  background-color: #eee;
+}

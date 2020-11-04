@@ -19,12 +19,15 @@
 }
 .main {
   height: 300px;
-  width: 900px;
+  min-width: 900px;
+  background-image: url("sample.jpg");
+  background-size: cover;
 }
 .introduce {
   text-align: center;
   margin: 0 auto;
   margin-bottom: 100px;
+  width: 900px;
 }
 .b {
   font-size: 50px;
@@ -36,6 +39,12 @@
   text-align: center;
   margin: 0 auto;
 }
+.taguitiran {
+  text-align: center;
+}
 .tagList {
   margin: 0 50px;
+}
+td {
+  padding: 20px;
 }
