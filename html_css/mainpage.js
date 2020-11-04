@@ -18,5 +18,7 @@ console.log(x.length);
 for (let i = 0; i < x.length; i++) {
     x[i].id = "tag_id" + String(i);
     x[i].innerHTML = taglist[i];
-    x[i].setAttribute('href', 'test.html');
+    //リンクを押したらroom1.htmlに遷移。それと一緒にtag変数をget通信で送る。
+    x[i].setAttribute('href', 'room1.html?tag=' + encodeURIComponent(taglist[i]));
+
 }
