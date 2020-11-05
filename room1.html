@@ -50,6 +50,10 @@
         </div>
     </div>
     <script>
+        var URL_SEND_NEWMOVIE = "http://54.238.75.103/app/backend/insert_url.php";
+        var URL_JUDGE_MOVIE_REQUEST = "http://54.238.75.103/app/backend/select_url.php";
+        var URL_GET_COMMENT = "http://54.238.75.103/app/backend/insert_url.php";
+        var URL_GET_PLAYING_URL = "http://54.238.75.103/app/backend/playing_url.php";
         function URLToId(url) {
             a = url.split("=");
             return a[1];
@@ -60,7 +64,7 @@
         const query = location.search;
         const value = query.split('=');
         var tag = decodeURIComponent(value[1]);//index.htmlからget通信で受け取った変数
-        console.log(tag);
+        ////console.log("saito:"+"saito:"+tag);
         /*tagが定義されていないとメインページに戻る仕様。開発中は無視しておｋ
         if (tag === "undefined") window.location.href="index.html";
         else  document.getElementById("tagname").innerHTML = tag ;*/
@@ -71,7 +75,10 @@
         firstScriptTag.parentNode.insertBefore(tt, firstScriptTag);
 
         /////////////////////////////////////////////////////////////////
-        var currentURL = sendPostXHR(/*phpURL*/0, "tag", tag);
+        
+        var response = sendPostXHR(URL_GET_PLAYING_URL, "fill", "hoge",tag);
+        console.log(response);
+        currentURL = response[0]['url'];
         /////////////////////////////////////////////////////////////////
         var currentURL = "https://www.youtube.com/watch?v=Mw4j4yPsFtg";//test
         var V_id = URLToId(currentURL);
@@ -100,7 +107,8 @@
         //APIが読み込まれたら実行される関数。StartTimeを取得して参加
         function onYouTubeIframeAPIReady() {
             ///////////////////////////////////////////////////////////////
-            StartTime = sendPostXHR(/*phpURL*/0, "load_message", true, tag);   //load_message >>> StartTime
+            //StartTime = sendPostXHR(/*phpURL*/0, "load_message", true, tag);   //load_message >>> StartTime
+            StartTime = 0;
             /////////////////////////////////////////////////////////////////
             LoadYoutube(StartTime);
         }
@@ -109,7 +117,7 @@
             player.mute();
             event.target.playVideo();//再生
             YoutubeLength = player.getDuration();//動画の長さ
-            console.log(YoutubeLength);
+            //console.log("saito:"+YoutubeLength);
         }
         /*player.getPlayerState()
         -1 – 未開始
@@ -129,25 +137,29 @@
                 LoadYoutube();     //新しい動画のURLでロード
                 //返り値は何でもいい。ここでflagをtrueにする。
                 /////////////////////////////////////////////////////////////////
-                var any = sendPostXHR(/*phpURL*/0, "start_message", true);　//start_message >> flag=true
+                //var any = sendPostXHR(URL_JUDGE_MOVIE_REQUEST, "current_url", currentURL,tag);　//start_message >> flag=true
                 /////////////////////////////////////////////////////////////////
             }
         }
         setInterval(function () {
             currentTime = parseInt(player.getCurrentTime());
-            console.log(player.getVideoLoadedFraction());
-            console.log("state" + player.getPlayerState());
-            console.log(currentTime + "/" + YoutubeLength);
-            console.log(player.getPlaybackRate());
+            //console.log("saito:"+player.getVideoLoadedFraction());
+            //console.log("saito:"+"state" + player.getPlayerState());
+            //console.log("saito:"+currentTime + "/" + YoutubeLength);
+            //console.log("saito:"+player.getPlaybackRate());
             //返り値は適当でいい。1秒ごとにPOSTで現在の動画時間を送る
-            var any = sendPostXHR(/*phpURL*/0, "currentTime", currentTime);
+            //var any = sendPostXHR(/*phpURL*/0, "currentTime", currentTime);
             //nextURLが更新されていない、かつ、動画の残り時間10秒のとき
             if (nextURL == currentURL && YoutubeLength - currrentTime < 10) {
                 var t = new Date();
                 var rand = 111 * t.getDate() + t.getHours();
                 //乱数を送る
                 /////////////////////////////////////////////////////////////////
-                nextURL = sendPostXHR(/*phpURL*/0, "end_random", rand, tag);  //random >>> selectedURL
+                //console.log("saito:"+sendPostXHR(URL_JUDGE_MOVIE_REQUEST, "current_url", currentURL,tag));　//start_message >> flag=true
+                console.log(tag);
+                var response = sendPostXHR(URL_GET_PLAYING_URL, "fill", "hoge",tag);
+                console.log(response);
+                nextURL = response['url'];
                 /////////////////////////////////////////////////////////////////
                 //backend側での処理
                 //1. 最初に来たエンドメッセージのリクエストでランダムにURLを選定。flag=falseにする。DBのcurrentURLを書き換える
@@ -160,54 +172,66 @@
         //post通信
         //ここらへん実際に動くか自信ないので確認お願いします。。。。
         //（送信先のディレクトリ、サーバーで受け取ったときの変数の名前、変数の中身、タグ名）
+        /*function sendPostXHR(url,name,data,tag){
+            var test = "aaa" ;
+            var request = createXmlHttpRequest();
+            request.open('POST', url);
+            request.addEventListener('load', function (response) {
+                test = this.responseText;
+                console.log(test);
+            });
+            request.send();
+        }
+        function createXmlHttpRequest() { var xmlhttp=null; if(window.ActiveXObject) { try { xmlhttp=new ActiveXObject("Msxml2.XMLHTTP"); } catch(e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e2) { } } } else if(window.XMLHttpRequest) { xmlhttp = new XMLHttpRequest(); } return xmlhttp; } 
+        */
         function sendPostXHR(url, name, data, tag) {
             var xhr = new XMLHttpRequest();
             var return_data;
-            xhr.withCredentials = true;
+            //xhr.withCredentials = true;
             xhr.open('POST', url);
             //tagと任意の変数を渡します。
             var Data = "tag" + "=" + tag + "&" + name + "=" + toString(data);
             xhr.setRequestHeader('content-type', 'application/json');
             xhr.onload = () => {
-                console.log(xhr.status);
-                console.log("success!");
+                console.log("saito:"+xhr.status);
+                //console.log("saito:"+"success!");
+                return_data = JSON.parse(xhr.responseText);
             };
             xhr.onerror = () => {
-                console.log(xhr.status);
-                console.log("error!");
+                //console.log("saito:"+xhr.status);
+                //console.log("saito:"+"error!");
             };
             xhr.send(Data);
             xhr.onreadystatechange = function () {
                 switch (xhr.readyState) {
                     case 0:
                         // 未初期化状態.
-                        console.log('uninitialized!');
+                        //console.log("saito:"+'uninitialized!');
                         break;
                     case 1: // データ送信中.
-                        console.log('loading...');
+                        //console.log("saito:"+'loading...');
                         break;
                     case 2: // 応答待ち.
-                        console.log('loaded.');
+                        //console.log("saito:"+'loaded.');
                         break;
                     case 3: // データ受信中.
-                        console.log('interactive... ' + xhr.responseText.length + ' bytes.');
+                        //console.log("saito:"+'interactive... ' + xhr.responseText.length + ' bytes.');
                         break;
                     case 4: // データ受信完了.
                         if (xhr.status == 200 || xhr.status == 304) {
                             var data = xhr.responseText; // responseXML もあり
-                            console.log('COMPLETE! :' + data);
+                            //console.log("saito:"+'COMPLETE! :' + data);
                         } else {
-                            console.log('Failed. HttpStatus: ' + xhr.statusText);
+                            //console.log("saito:"+'Failed. HttpStatus: ' + xhr.statusText);
                         }
                         break;
                 }
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    var responseData = JSON.parse(xhr.responseText);
-                    console.log(responseData);
+                    console.log("saito:"+responseData);
                     ///////////////////////////////////
                     return_data = 0;
                     ///////////////////////////////////
-                    /*return_dataは実際に通信してみて状況に応じて適切な値を返すように設定してほしい*/
+                    //return_dataは実際に通信してみて状況に応じて適切な値を返すように設定してほしい
                 }
             }
             return return_data;
@@ -215,7 +239,7 @@
         function send_url() {
             var sendURL = document.getElementById("URL").value;
             /////////////////////////////////////////////////////////////////
-            var message = sendPostXHR(/*phpURL*/0, "sendURL", sendURL, tag);   //tag>>> URL
+            var message = sendPostXHR(URL_SEND_NEWMOVIE, "urlrequest", sendURL, tag);   //tag>>> URL
             /////////////////////////////////////////////////////////////////
             message = "送信に成功しました.";//test
             document.getElementById("result_URLsend").innerHTML = message;
@@ -233,7 +257,7 @@
         }
         var conn = new WebSocket('ws://54.238.75.103:8080');
         conn.onopen = function (e) {
-            console.log("Connection established!");
+            //console.log("saito:"+"Connection established!");
         };
         conn.onmessage = function (e) {
             add_comment(e.data);
@@ -244,6 +268,8 @@
             conn.send(text);
             add_comment(text);
         }
+        
+
     </script>
 </body>
 
