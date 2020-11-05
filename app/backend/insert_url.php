@@ -14,8 +14,9 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         )
 );
-	$prepare = $dbh->prepare('insert into urlrequest(id,url)values(1,?)');
+	$prepare = $dbh->prepare('insert into urlrequest(id,url,tag)values(1,?,?)');
 	$url=$_POST['urlrequest'];
+	$tag=$_POST['tag'];
 	$f=1;
 	$youtube_link_prefix='https://www.youtube.com/watch?v=';
 	if(strlen($url)<32)$f=0;
@@ -28,6 +29,7 @@ try {
 	if ($fp&&$f==1) {
     		fclose($fp);
 		$prepare->bindValue(1,$url,PDO::PARAM_STR);
+		$prepare->bindValue(2,$tag,PDO::PARAM_STR);
                 $prepare->execute();
 		$result = $prepare->fetchAll(PDO::FETCH_BOTH);
 	}

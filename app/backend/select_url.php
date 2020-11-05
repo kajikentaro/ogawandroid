@@ -14,7 +14,7 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         )
         );
-
+/*
 	$input = $_POST['idx_rnd'];
         $prepare = $dbh->prepare('select * from urlrequest;');
         $prepare->execute();
@@ -30,6 +30,39 @@ try {
 		$test = array("url" =>$result[$idx_rnd%$row_cnt]['url']);
 		print_r($test);
 	}
+ */
+	$client_url = $_POST['current_url'];
+	$tag = $_POST['tag'];
+        $prepare = $dbh->prepare('select * from choiced_url where tag = ?;');
+	$prepare->bindValue(1,$tag,PDO::PARAM_STR); 
+        $prepare->execute();
+        $result = $prepare->fetchAll(PDO::FETCH_BOTH);
+	if($result['url'] != $client_url){
+		exit("already updated. nothing to do");
+	}
+        $prepare = $dbh->prepare('select * from urlrequest where tag = ?;');
+	$prepare->bindValue(1,$tag,PDO::PARAM_STR); 
+        $prepare->execute();
+        $result = $prepare->fetchAll(PDO::FETCH_BOTH);
+	$row_cnt = count($result);
+	//$idx_rnd = (int)$input;
+	$idx_rnd = rand();
+	$choiced_url = ""
+	if($row_cnt==0){
+		//$test = array("url" =>('https://www.youtube.com/watch?v=WJzSBLCaKc8'));
+		$choiced_url = 'https://www.youtube.com/watch?v=WJzSBLCaKc8';
+		//print_r($test);
+	}else{
+		//$test = array("url" =>$result[$idx_rnd%$row_cnt]['url']);
+		$choiced_url =$result[$idx_rnd%$row_cnt]['url'];
+		//print_r($test);
+	}
+	require("./delete_url.php");
+        $prepare = $dbh->prepare('update choiced_url set url = ?');
+	$prepare->bindValue(1,$selected_url,PDO::PARAM_STR); 
+        $prepare->execute();
+        $result = $prepare->fetchAll(PDO::FETCH_BOTH);
+	print_r($result);
 } catch (PDOException $e) {
         $error = $e->getMessage();
         die("pdo接続に失敗<br>$error");
