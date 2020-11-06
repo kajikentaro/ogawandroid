@@ -14,8 +14,8 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         )
 );
-	$prepare = $dbh->prepare('insert into urlrequest(id,url,tag)values(1,?,?)');
-	$url=$_POST['urlrequest'];
+	$prepare = $dbh->prepare('insert into urlrequest (url,tag) values(?,?)');
+	$url=$_POST['url'];
 	$tag=$_POST['tag'];
 	$f=1;
 	$youtube_link_prefix='https://www.youtube.com/watch?v=';
@@ -26,13 +26,16 @@ try {
 		}
 	}
 	$fp = @fopen($url, 'r');
+	$response = array("status"=>"refused url");
 	if ($fp&&$f==1) {
     		fclose($fp);
 		$prepare->bindValue(1,$url,PDO::PARAM_STR);
 		$prepare->bindValue(2,$tag,PDO::PARAM_STR);
                 $prepare->execute();
 		$result = $prepare->fetchAll(PDO::FETCH_BOTH);
+		$response = [array("status"=>"accepted!")];
 	}
+	echo json_encode($response);
 } catch (PDOException $e) {
         $error = $e->getMessage();
         die("pdo接続に失敗<br>$error");

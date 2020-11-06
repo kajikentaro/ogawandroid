@@ -1,0 +1,69 @@
+<script>
+        function sendPostXHR(url,name,data,tag){
+            var test = "aaa" ;
+	    var request = createXmlHttpRequest();
+            request.open('POST', url);
+            request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.addEventListener('load', function (response) {
+                test = this.responseText;
+                console.log(test);
+            });
+            request.send('tag=music&hoge=hoge');
+        }
+        function createXmlHttpRequest() { var xmlhttp=null; if(window.ActiveXObject) { try { xmlhttp=new ActiveXObject("Msxml2.XMLHTTP"); } catch(e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e2) { } } } else if(window.XMLHttpRequest) { xmlhttp = new XMLHttpRequest(); } return xmlhttp; } 
+/*
+        function sendPostXHR(url, name, data, tag) {
+            var xhr = new XMLHttpRequest();
+            var return_data;
+            //xhr.withCredentials = true;
+            xhr.open('POST', url);
+            //tagと任意の変数を渡します。
+            var Data = "tag" + "=" + tag + "&" + name + "=" + toString(data);
+            xhr.setRequestHeader('content-type', 'application/json');
+            xhr.onload = () => {
+                console.log("saito:"+xhr.status);
+                console.log("saito:"+"success!");
+                return_data = JSON.parse(xhr.responseText);
+            };
+            xhr.onerror = () => {
+                console.log("saito:"+xhr.status);
+                console.log("saito:"+"error!");
+            };
+            xhr.send(Data);
+            xhr.onreadystatechange = function () {
+                switch (xhr.readyState) {
+                    case 0:
+                        // 未初期化状態.
+                        console.log("saito:"+'uninitialized!');
+                        break;
+                    case 1: // データ送信中.
+                        console.log("saito:"+'loading...');
+                        break;
+                    case 2: // 応答待ち.
+                        console.log("saito:"+'loaded.');
+                        break;
+                    case 3: // データ受信中.
+                        console.log("saito:"+'interactive... ' + xhr.responseText.length + ' bytes.');
+                        break;
+                    case 4: // データ受信完了.
+                        if (xhr.status == 200 || xhr.status == 304) {
+                            var data = xhr.responseText; // responseXML もあり
+                            return_data = xhr.responseText; // responseXML もあり
+                            console.log("saito:"+'COMPLETE! :' + data);
+                        } else {
+                            console.log("saito:"+'Failed. HttpStatus: ' + xhr.statusText);
+                        }
+                        break;
+                }
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //console.log("saito:"+responseData);
+                    console.log("saito:"+return_data);
+                    ///////////////////////////////////
+                    ///////////////////////////////////
+                    //return_dataは実際に通信してみて状況に応じて適切な値を返すように設定してほしい
+                }
+            }
+            return return_data;
+        }
+	*/
+</script>
