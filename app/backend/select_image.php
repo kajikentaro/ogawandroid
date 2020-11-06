@@ -1,11 +1,14 @@
 <?php
 header('Access-Control-Allow-Origin: null');
 header('Access-Control-Allow-Credentials: true ');
-
 ini_set('display_errors',1);
+while(1){
+    sleep(1);
+    if(time()%10 == 9)select();
+}
+function select(){
 try {
         $dbh = new PDO(
-        'mysql:host=localhost;dbname=ogawandroid;charset=utf8;',
         #'mysql:host=54.238.75.103;dbname=ogawandroid;charset=utf8;',
         'ogawandroid',
         'password',
@@ -14,25 +17,7 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         )
         );
-/*
-	$input = $_POST['idx_rnd'];
-        $prepare = $dbh->prepare('select * from urlrequest;');
-        $prepare->execute();
-        $result = $prepare->fetchAll(PDO::FETCH_BOTH);
-	$row_cnt = count($result);
-	$idx_rnd = (int)$input;
-
-	if($row_cnt==0){
-		$test = array("url" =>('https://www.youtube.com/watch?v=WJzSBLCaKc8'));
-
-		print_r($test);
-	}else{
-		$test = array("url" =>$result[$idx_rnd%$row_cnt]['url']);
-		print_r($test);
-	}
- */
-	$client_url = $_POST['current_url'];
-	$tag = $_POST['tag'];
+	$tag = $_POST['tag'];//要改善
         $prepare = $dbh->prepare('select * from choiced_url where tag = ?;');
 	$prepare->bindValue(1,$tag,PDO::PARAM_STR); 
         $prepare->execute();
@@ -41,31 +26,25 @@ try {
 	if($result[0]['url'] != $client_url){
 		exit("URL already updated. nothing to do");
 	}
-        $prepare = $dbh->prepare('select * from urlrequest where tag = ?;');
+        $prepare = $dbh->prepare('select * from image_list where tag = ?;');
 	$prepare->bindValue(1,$tag,PDO::PARAM_STR); 
         $prepare->execute();
         $result = $prepare->fetchAll(PDO::FETCH_BOTH);
 	$row_cnt = count($result);
-	//$idx_rnd = (int)$input;
 	$idx_rnd = rand();
 	$choiced_url = "";
 	if($row_cnt==0){
-		//$test = array("url" =>('https://www.youtube.com/watch?v=WJzSBLCaKc8'));
-#$choiced_url = 'https://www.youtube.com/watch?v=WJzSBLCaKc8';
-		$choiced_url = 'https://www.youtube.com/watch?v=_tiU56h2NAs';
-		//print_r($test);
+		$choiced_url = $tag.'.jpg' ;
 	}else{
-		//$test = array("url" =>$result[$idx_rnd%$row_cnt]['url']);
-		$choiced_url =$result[$idx_rnd%$row_cnt]['url'];
-		//print_r($test);
+		$choiced_url =$result[$idx_rnd%$row_cnt]['name'];
+		delete_img($choiced_url);
 	}
-	require("./delete_url.php");
-        $prepare = $dbh->prepare('update choiced_url set url = ? ,time = ?');
+        $prepare = $dbh->prepare('update choiced_image set name = ? where tag = ?');
 	$prepare->bindValue(1,$choiced_url,PDO::PARAM_STR); 
-	$prepare->bindValue(2,time()+10,PDO::PARAM_STR); 
+	$prepare->bindValue(2,$tag,PDO::PARAM_STR); 
         $prepare->execute();
         $result = $prepare->fetchAll(PDO::FETCH_BOTH);
-	echo(json_encode($result));
+	echo(json_encode(array("status"=>"ok")));
 } catch (PDOException $e) {
         $error = $e->getMessage();
         die("pdo接続に失敗<br>$error");
@@ -73,5 +52,30 @@ try {
         $error = $e->getMessage();
         die("接続に失敗<br>$error");
 }
+}
+function delete_img($name){
+try {
+        $dbh = new PDO(
+        'mysql:host=localhost;dbname=ogawandroid;charset=utf8;',
+        'ogawandroid',
+        'password',
+        array(
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        )
+);
+	$prepare = $dbh->prepare('delete from image_list where name = ?');
+	$prepare->bindValue(1,$name,PDO::PARAM_STR); 
+	$prepare->execute();
+} catch (PDOException $e) {
+        $error = $e->getMessage();
+        die("pdo接続に失敗<br>$error");
+} catch (Exception $e){
+        $error = $e->getMessage();
+        die("接続に失敗<br>$error");
+}
+
+}
+
 
 ?>

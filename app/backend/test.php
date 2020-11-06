@@ -1,3 +1,3 @@
 <?php
-$test = array("test" => "test");
-echo json_encode($test);
+print_r($_FILES);
+print_r($_POST);

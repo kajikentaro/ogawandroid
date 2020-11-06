@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <form id="f1" enctype='multipart/form_data'>
+        <input type="text" if="file" name="tag" value="img">
+        <input type="file" if="file" name="file_name" accept=".png,.jpg,.jpeg">
+        <input type="button" value="send" onclick="send_file()">
+    </form>
+    <img id="show_image">
+    <script>
+        var tag = "img";
+        function send_file() {
+            const form = document.getElementById('f1');
+            const fd = new FormData(form);
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.open("POST", "http://54.238.75.103/app/backend/receive_image.php");
+            //xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            xhr.send(fd);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    data = this.responseText;
+                    console.log(data);
+                }
+            }
+	    console.log("end_send_file()");
+        }
+
+        var img = document.getElementById("show_image");
+        var d = new Date();
+        var sec = d.getSeconds();
+        if (sec % 5 == 6) {
+            console.log(sec);
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.open('POST', "http://54.238.75.103/app/backend/receive_image.php");
+            var test = "tag=" + tag;
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            xhr.responseType = 'text';
+            xhr.send(test);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    data = this.responseURL;
+                    console.log(data);
+                    show_image.setAttribute('src', 'sample.jpg');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

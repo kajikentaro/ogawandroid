@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <form id="f1">
+        <input type="text" if="file" name="tag" value="img">
+        <input type="file" if="file" name="file_name" accept=".png,.jpg,.jpeg">
+        <input type="submit" value="send">
+    </form>
+    <script>
+        function send_file() {
+            const form = document.getElementById('f1');
+            const fd = new FormData(form);
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.open("POST", "http://54.238.75.103/app/backend/test.php");
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            xhr.send(fd);
+            xhr.onreadystatechange = function () {
+		data = this.responseText;
+		console.log(data);
+            }
+	    console.log("end_send_file()");
+        }
+
+	function test(){
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.open('POST', "http://54.238.75.103/app/backend/test.php");
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            xhr.responseType = 'text';
+            xhr.send("hello");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    data = this.responseText;
+                    console.log(data);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

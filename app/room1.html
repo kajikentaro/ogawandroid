@@ -2,67 +2,67 @@
 <html lang="ja">
 
 <head>
-    <meta charset="utf-8" />
-    <title>movie_room</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<title>movie_room</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>YouTube Sync</h1>
-    </header>
-    <div id="room_name">
-    </div>
-    <div id="left-contents-wrapper">
-    <div id="left-contents">
-        <div id="screen">
-            <iframe id="content" src="https://www.youtube.com/embed/SyWwoMpP_P4?&autoplay=1&mute=1" frameborder="0"
-                allowfullscreen></iframe>
-        </div>
-        <div id="url">
-            <form action="http://18.181.166.121/saitofolder/rec.php" method="post">
-                <input type="textarea" name="confirm" id="URL">
-                <input type="submit" value="送信">
-            </form>
-        </div></div>
-    </div><div id="right-contents-wrapper"><div id="right-contents">
-        <table>
-            <tr>
-			<div id="comment_content" style="word-wrap:break-word;">
-				<p>コメ1</p>
-			</div>
-            </tr>
-            <tr>
-                <div id="comment_form">
-                    <form name="fm">
-                        <input type="textarea" name="name" id="com_text">
-                        <input type="button" id="btnsend" name="submit" value="送信" onclick="send_comment()">
-                    </form>
-                    <div id="result"></div>
-                </div>
-            </tr>
-        </table>
-    </div></div>
+<header>
+<h1>YouTube Sync</h1>
+</header>
+<div id="room_name">
+</div>
+<div id="left-contents-wrapper">
+<div id="left-contents">
+<div id="screen">
+<iframe id="content" src="https://www.youtube.com/embed/SyWwoMpP_P4?&autoplay=1&mute=1" frameborder="0"
+allowfullscreen></iframe>
+</div>
+<div id="url">
+<form action="http://18.181.166.121/saitofolder/rec.php" method="post">
+<input type="textarea" name="confirm" id="URL">
+<input type="submit" value="送信">
+</form>
+</div></div>
+</div><div id="right-contents-wrapper"><div id="right-contents">
+<table>
+<tr>
+<div id="comment_content" style="word-wrap:break-word;">
+<p>コメ1</p>
+</div>
+</tr>
+<tr>
+<div id="comment_form">
+<form name="fm">
+<input type="textarea" name="name" id="com_text">
+<input type="button" id="btnsend" name="submit" value="送信" onclick="send_comment()">
+</form>
+<div id="result"></div>
+</div>
+</tr>
+</table>
+</div></div>
 <script>
 function add_comment(text){
-	var newElement = document.createElement("p"); // p要素作成
-	var newContent = document.createTextNode(text); // テキストノードを作成
-	newElement.appendChild(newContent); // p要素にテキストノードを追加
-	newElement.setAttribute("id","child-p1"); // p要素にidを設定
-	var parentDiv = document.getElementById("comment_content");
-	parentDiv.insertBefore(newElement, parentDiv.firstChild);
+  var newElement = document.createElement("p"); // p要素作成
+  var newContent = document.createTextNode(text); // テキストノードを作成
+  newElement.appendChild(newContent); // p要素にテキストノードを追加
+  newElement.setAttribute("id","child-p1"); // p要素にidを設定
+  var parentDiv = document.getElementById("comment_content");
+  parentDiv.insertBefore(newElement, parentDiv.firstChild);
 }
 var conn = new WebSocket('ws://54.238.75.103:8080');
 conn.onopen = function(e) {
-	console.log("Connection established!");
+  console.log("Connection established!");
 };
 conn.onmessage = function(e) {
-	add_comment(e.data);
+  add_comment(e.data);
 };
 function send_comment(){
-	text =document.getElementById("com_text").value;
-	document.getElementById("com_text").value = "";
-	conn.send(text);
-	add_comment(text);
+  text =document.getElementById("com_text").value;
+  document.getElementById("com_text").value = "";
+  conn.send(text);
+  add_comment(text);
 }
 </script>
 </body>
