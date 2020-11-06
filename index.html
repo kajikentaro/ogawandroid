@@ -9,23 +9,61 @@
 
 <body>
     <div class="body">
-        <div class="header">
-            <p class="Service_name">ContentsSyncer</p>
-        </div>
-        <div class="main">
+       <div class="main">
             <div class="introduce">
-                <h3 class="b">ContentsSyncerへようこそ!!</h3>
+                <h3 class="b">Welcome To ContentsSyncer</h3>
                 <p class="explain">ContentsSyncerは全世界の人達と好きなコンテンツをリアルタイムで共有することができます。</p>
-                </p>
             </div>
             <div class="tagList">
                 <h3 class="taguitiran">タグ一覧</h3>
-                <table id="tag_list">
-                </table>
+<div class="contents">
+    <div class="row">
+        <a href="harinezumi.jpg" target="_blank" ><img src="img/music.png" href="hoge"></a><img src="img/pc.png">
+    </div>
+    <div class="row">
+    <img src="img/game.png"><img src="img/news.png">
+    </div>
+    <div class="row">
+    <img src="img/sports.png"><img src="img/documentary.png">
+    </div>
+    <div class="row">
+    <img src="img/norimono.png"><img src="img/dokkiri.png">
+    <img src="img/owarai.png">
+    </div>
+</div>
+    <footer>
+        <p>Copyright © 2020 Ogawandroid All Rights Reserved.</p>
+    </footer>
+<style>
+    footer{
+        padding-top:100px;
+        text-align:center;
+    }
+    h3{
+        color:#ffffff;
+    }
+    p{
+        color:white;
+    }
+    .row{
+        width: 800px;
+        text-align: center;
+    }
+    img{
+        display:inline-block;
+        height:190px;
+        border-radius:10px;
+        margin:15px;
+    }
+    body{
+        background-color:#000000;
+    }
+                
+</style>
             </div>
         </div>
     </div>
-    <script>
+    <script>/*
         console.log("helloo");
         let taglist = ["PopularMusic", "Anime", "Game", "Movie", "Study"];
         let table = document.getElementById('tag_list');
@@ -50,6 +88,7 @@
             x[i].setAttribute('href', 'room1.html?tag=' + encodeURIComponent(taglist[i]));
 
         }
+        */
     </script>
 </body>
 
