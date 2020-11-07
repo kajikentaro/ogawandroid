@@ -11,7 +11,9 @@ var V_id ;
 var player;
 const query = location.search;
 const value = query.split('=');
-
+window.onload = ()=>{
+    console.log("hello");
+}
 var tag = decodeURIComponent(value[1]);//index.htmlからget通信で受け取った変数
 /*tagが定義されていないとメインページに戻る仕様。開発中は無視しておｋ
   if (tag === "undefined") window.location.href="index.html";
@@ -80,10 +82,10 @@ function onPlayerStateChange(event) {
 	    }
 	    console.log("再生が終了しました");
 	    document.location.reload(true);//ココより下がうまく動かないからとりまリロードしてる。あんまりよくない
-	    current_movie_info = next_player_info;
-	    var date = new Date();
-	    var now_unix = Math.floor( date.getTime() / 1000 ) ;
-	    LoadYoutube(now_unix - Number(next_player_info['time']));
+	    //current_movie_info = next_player_info;
+	    //var date = new Date();
+	    //var now_unix = Math.floor( date.getTime() / 1000 ) ;
+	    //LoadYoutube(now_unix - Number(next_player_info['time']));
 	    break;
 	case 1://再生中
 	    //動画終了10行前にlast_10sec関数を呼び出すように設定する。

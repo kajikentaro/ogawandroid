@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <title>movie_room</title>
-    <link rel="stylesheet" href="style_room.css">
+    <link rel="stylesheet" href="./style_room.css">
+    <link href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" rel="stylesheet">
     <script type="text/javascript" src="room11.js"></script>
 </head>
 
@@ -17,7 +18,7 @@
         <div class="contents">
             <div id="left-contents-wrapper">
                 <div id="left-contents">
-                    <div class="parent_screen">
+                    <div class="parent_screen" id="parent_screen">
                         <div id="screen" class="screen"></div>
                     </div>
                     <div class="url" id="url">
@@ -31,24 +32,25 @@
                 </div>
             </div>
             <div id="right-contents-wrapper">
+	    <div class="button-wrapper">
+                        <input type="button" id="unMute" value="ミュートを解除" onclick="unmute()">
+</div>
                 <div id="right-contents">
-                    <div class="comment_content" id="comment_content" style="word-wrap:break-word;">
+                    <div class="comment_content" id="comment_content">
                         <p>コメ1</p>
                     </div>
                     <div class="comment_form" id="comment_form">
-                        <form onsubmit="return false;" name="fm">
-                            <input type="text" name="name" id="com_text">
-                            <input type="button" id="btnsend" name="submit" value="送信" onclick="send_comment()">
+                        <form onsubmit="return false;" name="fm" class="form1">
+                            <input type="text" name="name" id="com_text"><input type="button" id="btnsend" name="submit" value="送信" onclick="send_comment()">
                         </form>
                         <div id="result"></div>
-                        <input type="button" id="unMute" value="unmute" onclick="unmute()">
                     </div>
                 </div>
             </div>
         </div>
-        <div id="link">
-            <a class="youtube_link" style="font-size:20px;" href="https://www.youtube.com/">youtubeからURLを取得しよう</a>
-        </div>
+	<div class="youtubetest">
+            <a class="youtube_link" style="font-size:20px;" href="https://www.youtube.com/"><div id="link"><i class="fab fa-youtube fa-3x youtube-red"></i>youtubeからURLを取得しよう </div></a>
+	    </div>
     </div>
 </body>
 

@@ -12,6 +12,12 @@ var player;
 const query = location.search;
 const value = query.split('=');
 
+window.onresize = setScreenWidth;
+window.onload = setScreenWidth;
+function setScreenWidth(){
+    var width=document.getElementById("parent_screen").getBoundingClientRect().width;
+    document.getElementById("parent_screen").style.height=width*0.5625+"px";
+}
 var tag = decodeURIComponent(value[1]);//index.htmlからget通信で受け取った変数
 /*tagが定義されていないとメインページに戻る仕様。開発中は無視しておｋ
   if (tag === "undefined") window.location.href="index.html";
@@ -22,6 +28,8 @@ var start_play = function (d) {
     if (d[0] == void 0) {
         console.log("current urlを取得できません。tagが指定されていない可能性があります");
     }
+    console.log(d[0][2]);
+    document.getElementById('tagname').innerHTML=d[0][2];
     current_movie_info = d[0];
     loadAPI();
 }
@@ -33,12 +41,9 @@ function loadAPI() {
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tt, firstScriptTag);
 }
-//APIが読み込まれたら実行される関数。StartTimeを取得して参加
-var now_unix;
 function onYouTubeIframeAPIReady() {
-    var date = new Date();
-    now_unix = Math.floor(date.getTime() / 1000);
     currentURL = current_movie_info['url'];
+    console.log(currentURL);
     player = new YT.Player('screen', {
         videoId: URLToId(currentURL),
         playerVars: {
@@ -48,24 +53,28 @@ function onYouTubeIframeAPIReady() {
             'iv_load_policy': 3,
             'rel': 0,
             'modestbranding': 1,
+	    'start':0
         },
-	events:{
-            'onReady':onPlayerReady,
-	    'onStateChange':onPlayerStateChange
-	}
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
     });
+}
+function onPlayerReady(event) {
+    var date = new Date();
+    now_unix = Math.floor(date.getTime() / 1000);
+    console.log("onPlayerReady");
+    console.log(now_unix - Number(current_movie_info['time']));
+    LoadYoutube(now_unix - Number(current_movie_info['time']));
+    //Math.max(now_unix - Number(current_movie_info['time'])));
+    player.mute();//ミュートにしてから再生しないといけないらしい
+    event.target.playVideo();//再生
 }
 function LoadYoutube(StartTime = 0) {
     console.log(player.getPlayerState());
     player.loadVideoById(URLToId(currentURL), StartTime, 'large');
-}
-
-function onPlayerReady(event) {
-    console.log("onPlayerReady");
-    console.log(now_unix - Number(current_movie_info['time']));
-    LoadYoutube(Math.max(now_unix - Number(current_movie_info['time'])));
-    player.mute();//ミュートにしてから再生しないといけないらしい
-    event.target.playVideo();//再生
+    console.log(player.getPlayerState());
 }
 function onPlayerStateChange(event) {
     var date = new Date();
@@ -85,14 +94,17 @@ function onPlayerStateChange(event) {
             console.log("再生が終了しました");
             //document.location.reload(true);//ココより下がうまく動かないからとりまリロードしてる。あんまりよくない
             current_movie_info = next_player_info;
+	    currentURL = current_movie_info['url'];
             var date = new Date();
             var now_unix = Math.floor(date.getTime() / 1000);
             LoadYoutube(now_unix - Number(next_player_info['time']));
             break;
         case 1://再生中
             //動画終了10行前にlast_10sec関数を呼び出すように設定する。
-            var timetmp = Math.max(0, player.getDuration() - now_position - 10) * 1000;
-            setTimeout(last_10sec, timetmp);
+            var timetmp10 = Math.max(0, player.getDuration() - now_position - 10) * 1000;
+            var timetmp8 = Math.max(0, player.getDuration() - now_position - 8) * 1000;
+            setTimeout(last_10sec, timetmp10);
+            setTimeout(last_8sec, timetmp8);
             break;
         case 2://一時停止
             event.target.playVideo();//止めさせない
@@ -105,19 +117,24 @@ function onPlayerStateChange(event) {
 }
 var last_10sec = function () {
     console.log("残り10秒です");
-
-    sendPostXHR(URL_JUDGE_MOVIE_REQUEST, "current_url", currentURL, tag, () => {
+    sendPostXHR(URL_JUDGE_MOVIE_REQUEST, "current_url", currentURL, tag, (response) => {
+		console.log("urlrequestの削除、動画の選出がおわりました");
+		
+		
+    });
+}
+var last_8sec = function(){
         sendPostXHR(URL_GET_PLAYING_URL, "fill", "hoge", tag, (response) => {
+		console.log("next_player_infoに値が挿入されました");
             next_player_info = response[0];
         });
-    });
 }
 function URLToId(url) {
     var tmp = url.split("=")[1];
     if (tmp == void 0) {
         tmp = url.split("/");
         tmp = tmp[tmp.length - 1];
-    }
+    }https://youtu.be/O1PCh_aaprE
     if (tmp == void 0) {
         echo("URLからIDを取得できません");
     }
@@ -133,21 +150,31 @@ function sendPostXHR(url, name, data, tag, postfunc) {
     request.addEventListener('load', function (response) {
         var result = JSON.parse(this.responseText);
         postfunc(result);
+	console.log(this.responseText);
     });
     request.send(name + "=" + data + "&tag=" + tag);
 }
 function createXmlHttpRequest() { var xmlhttp = null; if (window.ActiveXObject) { try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e2) { } } } else if (window.XMLHttpRequest) { xmlhttp = new XMLHttpRequest(); } return xmlhttp; }
 function send_url() {
     var sendURL = document.getElementById("URL").value;
-    sendPostXHR(URL_SEND_NEWMOVIE, "url", sendURL, tag, () => {
-        message = "送信に成功しました.";
+    var tes = sendURL.split("/");
+    if(tes[0]=='https:'&&tes[2]=='youtu.be'){
+	sendURL='https://www.youtube.com/watch?v='+tes[3];
+    }
+    sendPostXHR(URL_SEND_NEWMOVIE, "url", sendURL, tag, (result) => {
+	if(result[0]['status']=="refused url"){
+            message = "有効なURLを送信してください.";
+	}
+	else{
+            message = "送信に成功しました.";
+	    }
         document.getElementById("result_URLsend").innerHTML = message;
     });
 }
 //コメントの処理
 function get_comment_list() {
     sendPostXHR(URL_GET_COMMENT, "fill", "hoge", tag, (d) => {
-        for (const com of d) {
+        for (const com of d[0]) {
             add_comment(com['comment']);
         }
     });

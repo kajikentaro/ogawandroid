@@ -4,12 +4,17 @@ header('Access-Control-Allow-Credentials: true ');
 ini_set('display_errors',1);
 while(1){
     sleep(1);
-    if(time()%10 == 9)select();
+    if(time()%10 == 9){
+	select("fukei");
+	select("e");
+	select("omoshiro");
+	select("animal");
+    }
 }
-function select(){
+function select($tag){
 try {
         $dbh = new PDO(
-        #'mysql:host=54.238.75.103;dbname=ogawandroid;charset=utf8;',
+        'mysql:host=localhost;dbname=ogawandroid;charset=utf8;',
         'ogawandroid',
         'password',
         array(
@@ -17,15 +22,7 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         )
         );
-	$tag = $_POST['tag'];//要改善
-        $prepare = $dbh->prepare('select * from choiced_url where tag = ?;');
-	$prepare->bindValue(1,$tag,PDO::PARAM_STR); 
-        $prepare->execute();
-        $result = $prepare->fetchAll(PDO::FETCH_BOTH);
-	//echo $result[0]['url'];
-	if($result[0]['url'] != $client_url){
-		exit("URL already updated. nothing to do");
-	}
+
         $prepare = $dbh->prepare('select * from image_list where tag = ?;');
 	$prepare->bindValue(1,$tag,PDO::PARAM_STR); 
         $prepare->execute();
@@ -39,6 +36,7 @@ try {
 		$choiced_url =$result[$idx_rnd%$row_cnt]['name'];
 		delete_img($choiced_url);
 	}
+	echo($choiced_url);
         $prepare = $dbh->prepare('update choiced_image set name = ? where tag = ?');
 	$prepare->bindValue(1,$choiced_url,PDO::PARAM_STR); 
 	$prepare->bindValue(2,$tag,PDO::PARAM_STR); 
@@ -54,6 +52,7 @@ try {
 }
 }
 function delete_img($name){
+//unlink('/var/www/html/tmp/'.$name);
 try {
         $dbh = new PDO(
         'mysql:host=localhost;dbname=ogawandroid;charset=utf8;',
